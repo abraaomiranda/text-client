@@ -1,0 +1,49 @@
+defmodule TextClient.Player do
+  alias TextClient.State
+
+  def play(%State{tally: %{game_state: :won}}) do
+    exit_with_message("Wow! Great job! You figured out this one.")
+  end
+
+  def play(%State{tally: %{game_state: :lost}}) do
+    exit_with_message("Ops! You not won this time. Maybe in the next one.")
+  end
+
+  def play(game = %State{tally: %{game_state: :already_used}}) do
+    continue_with_message(game, "It seems that you already used this letter :thinking_face:")
+  end
+
+  def play(game = %State{tally: %{game_state: :good_guess}}) do
+    continue_with_message(game, "Nice one! Keep going.")
+  end
+
+  def play(game = %State{tally: %{game_state: :bad_guess}}) do
+    continue_with_message(game, "Nope! It's not have this letter. Try again")
+  end
+
+  def play(game) do
+    continue(game)
+  end
+
+  defp continue_with_message(game, message) do
+    IO.puts(message)
+    continue(game)
+  end
+
+  defp continue(game) do
+    game
+    |> display()
+    |> prompt()
+    |> make_move()
+    |> play()
+  end
+
+  defp display(game), do: game
+  defp prompt(game), do: game
+  defp make_move(game), do: game
+
+  defp exit_with_message(message) do
+    IO.puts(message)
+    exit(:normal)
+  end
+end
